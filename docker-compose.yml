@@ -1,0 +1,83 @@
+version: '3'
+services:
+  domain:
+    image: openmined/grid-domain
+    environment:
+      - NODE_ID=server
+      - ADDRESS=http://central-server:5000/
+      - PORT=5000
+      - DATABASE_URL=sqlite:///databasenode.db
+    ports:
+      - 5000:5000
+    networks: 
+      - model-centric-fl
+
+  # central-server:
+  #   image: openmined/grid-domain
+  #   build: ./node
+  #   container_name: central-server
+  #   environment:
+  #     - NODE_ID=central-server
+  #     - ADDRESS=http://central-server:5000/
+  #     - PORT=5000
+  #     - DATABASE_URL=sqlite:///databasenode.db
+  #   networks: 
+  #     - model-centric-fl
+  #   ports:
+  #     - 5000:5000
+
+  # fl-server:
+  #   image: fl_server:0.2
+  #   build: ./CentralServer
+  #   depends_on:
+  #     - 'central-server'
+  #   environment:
+  #     - GRID_ADDRESS=central-server:5000
+  #     - ID=FL_Server
+  #     - MODEL_NAME=mnist
+  #     - MODEL_VERSION=1.0.0
+  #     - NO_CYCLES=10
+  #     - CLIENTS_PER_CYCLE=10
+  #     - BATCH_SIZE=64
+  #     - LR=0.01
+  #     - SOCKET_HOST='localhost'
+  #     - SOCKET_CLIENT_PORT=20000
+  #     - SOCKET_CONTROLLER_PORT=20005
+  #   networks: 
+  #     - model-centric-fl
+
+  # fl-client1:
+  #   image: fl_client:0.2
+  #   build: ./FLClient
+  #   environment:
+  #     - GRID_ADDRESS=ws://central-server:5000
+  #     - MODEL_NAME=mnist
+  #     - MODEL_VERSION=1.0.0
+  #     - CLIENT_ID=fl-client1
+  #     - TRAIN_DATASET_PATH=/app/dataset/client_1_train_data.csv
+  #     - SOCKET_HOST='localhost'
+  #     - SOCKET_PORT=20000
+  #   depends_on:
+  #     - 'fl-server'
+  #   networks: 
+  #     - model-centric-fl
+
+  # fl-client2:
+  #   image: fl_client:0.2
+  #   build: ./FLClient
+  #   environment:
+  #     - GRID_ADDRESS=ws://central-server:5000
+  #     - MODEL_NAME=mnist
+  #     - MODEL_VERSION=1.0.0   
+  #     - CLIENT_ID=fl-client2
+  #     - TRAIN_DATASET_PATH=/app/dataset/client_2_train_data.csv
+  #     - SOCKET_HOST='localhost'
+  #     - SOCKET_PORT=20000
+  #   depends_on:
+  #     - 'fl-server'
+  #   networks: 
+  #     - model-centric-fl
+      
+networks:
+  model-centric-fl:
+    driver: bridge
